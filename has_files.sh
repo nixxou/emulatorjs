@@ -82,6 +82,14 @@ process_name () {
 
 process_chd () {
   echo "processing ${file}"
+  output=$(bash -c '(/mod/identify_psx_chd.py "$file"); exit $?' 2>&1)
+  status=$?
+  if [ $status -eq 0 ]
+  then
+    sum="$output"
+    printf ${sum^^} > "${user_folder}/hashes/${rom_path}/${file}.sha1"
+    return 1
+  fi
   mkdir -p "${user_folder}/hashes/${rom_path}/tmp"
   chdman extractcd -i "${user_folder}${rom_path}/${file}" -o "${user_folder}/hashes/${rom_path}/tmp/FILE.cue"
   # Check if file has a track 2
